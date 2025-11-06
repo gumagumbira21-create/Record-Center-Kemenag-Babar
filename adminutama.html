@@ -11,7 +11,917 @@
         :root {
             --bg-color: #e0e5ec;
             --main-color: #4a4e69;
+            --accent-color: #5d5dff;<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Admin Utama - Record Center Kemenag Babar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* Variabel CSS untuk Tema Neumorphism dan Tinggi Elemen */
+        :root {
+            --bg-color: #e0e5ec;
+            --main-color: #4a4e69;
             --accent-color: #5d5dff;
+            --light-shadow: #ffffff;
+            --dark-shadow: #a3b1c6;
+            --card-radius: 20px;
+            --transition-speed: 0.3s;
+            /* Tinggi dan margin yang dihitung secara eksplisit */
+            --navbar-margin-top: 20px;
+            --navbar-height-desktop: 80px; 
+            --navbar-height-mobile: 70px; 
+            --navbar-full-height-desktop: calc(var(--navbar-margin-top) + var(--navbar-height-desktop)); /* 100px */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--main-color);
+            padding-bottom: 150px; /* Tambahkan ruang lebih untuk footer yang fixed */
+            min-height: 100vh;
+        }
+        
+        /* Kelas untuk mencegah scrolling saat menu terbuka */
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        /* --- Navbar Atas (Menggunakan Fixed Position untuk Stabilitas) --- */
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            
+            position: fixed; 
+            width: calc(100% - 40px);
+            top: var(--navbar-margin-top);
+            left: var(--navbar-margin-top);
+            height: var(--navbar-height-desktop);
+            margin: 0;
+
+            border-radius: var(--card-radius);
+            background: var(--bg-color);
+            box-shadow: 
+                9px 9px 16px var(--dark-shadow),
+                -9px -9px 16px var(--light-shadow);
+            z-index: 1001; 
+            transition: all var(--transition-speed) ease;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .navbar-logo img {
+            width: 40px;
+            margin-right: 15px;
+            border-radius: 50%;
+            box-shadow: 2px 2px 5px var(--dark-shadow), -2px -2px 5px var(--light-shadow);
+        }
+
+        /* --- Neumorphism Base Styles --- */
+        .neumorphic {
+            border-radius: var(--card-radius);
+            background: var(--bg-color);
+            box-shadow: 
+                9px 9px 16px var(--dark-shadow),
+                -9px -9px 16px var(--light-shadow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* --- Tata Letak Utama & Kontainer --- */
+        .container {
+            padding-top: calc(var(--navbar-full-height-desktop) + 20px); 
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 20px;
+            gap: 30px;
+        }
+        
+        /* Hamburger Menu & Profile */
+        .menu-toggle {
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            border-radius: 50%;
+            background: var(--bg-color);
+            box-shadow: 
+                7px 7px 14px var(--dark-shadow),
+                -7px -7px 14px var(--light-shadow);
+            border: none;
+            font-size: 1.5rem;
+            line-height: 1;
+            margin-left: 20px; 
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .menu-toggle:active {
+            box-shadow: 
+                inset 5px 5px 10px var(--dark-shadow),
+                inset -5px -5px 10px var(--light-shadow);
+        }
+
+        /* Sidebar/Navigasi */
+        .sidebar {
+            position: fixed;
+            top: calc(var(--navbar-full-height-desktop) + 20px);
+            right: 0; 
+            width: 250px;
+            padding: 30px 20px;
+            height: calc(100vh - var(--navbar-full-height-desktop) - 20px); 
+            z-index: 1002;
+            margin-right: 20px;
+
+            transform: translateX(120%);
+            transition: transform 0.4s ease-in-out;
+            
+            border-radius: var(--card-radius); 
+            background: var(--bg-color);
+            box-shadow: 15px 15px 30px var(--dark-shadow); 
+        }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar nav {
+            flex-grow: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        /* --- Kontainer Profil di Sidebar --- */
+        .sidebar-profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--dark-shadow);
+        }
+
+        .sidebar-username {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-login-btn {
+            width: 80%;
+            padding: 12px;
+            font-weight: 700;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            text-decoration: none;
+            font-weight: 500;
+            color: var(--main-color);
+            border-radius: 15px;
+            box-shadow: 5px 5px 10px var(--dark-shadow), -5px -5px 10px var(--light-shadow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .nav-item:hover {
+            color: var(--accent-color);
+            box-shadow: inset 3px 3px 6px var(--dark-shadow), inset -3px -3px 6px var(--light-shadow);
+        }
+
+        .nav-item.active {
+            box-shadow: inset 5px 5px 10px var(--dark-shadow), inset -5px -5px 10px var(--light-shadow);
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+        
+        .icon {
+            margin-right: 20px;
+            font-size: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .content { flex-grow: 1; }
+        .navbar-right { display: flex; align-items: center; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0 30px 0; }
+        .user-profile { 
+            width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 7px 7px 14px var(--dark-shadow), -7px -7px 14px var(--light-shadow);
+        }
+
+        .neumorphic-btn { padding: 10px 20px; border: none; cursor: pointer; font-weight: 500; color: var(--main-color); border-radius: 12px; background: var(--bg-color); box-shadow: 5px 5px 10px var(--dark-shadow), -5px -5px 10px var(--light-shadow); transition: all var(--transition-speed) ease; }
+
+        .neumorphic-btn:hover {
+            /* Efek hover: bayangan sedikit berkurang, memberi kesan 'terangkat' */
+            box-shadow: 3px 3px 6px var(--dark-shadow),
+                        -3px -3px 6px var(--light-shadow);
+        }
+
+        .neumorphic-btn:active {
+            /* Efek 'tertekan' saat diklik */
+            box-shadow: inset 4px 4px 8px var(--dark-shadow),
+                        inset -4px -4px 8px var(--light-shadow);
+        }
+
+        /* --- Gaya Formulir Neumorphic --- */
+        .form-card {
+            padding: 30px 40px;
+            border-radius: var(--card-radius);
+            background: var(--bg-color);
+            box-shadow: 9px 9px 16px var(--dark-shadow), -9px -9px 16px var(--light-shadow);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 40px;
+        }
+
+        .form-group {
+            margin-bottom: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--main-color);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            background: var(--bg-color);
+            box-shadow: inset 4px 4px 8px var(--dark-shadow),
+                        inset -4px -4px 8px var(--light-shadow);
+            color: var(--main-color);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            box-shadow: inset 2px 2px 4px var(--dark-shadow),
+                        inset -2px -2px 4px var(--light-shadow),
+                        0 0 0 2px var(--accent-color);
+        }
+
+        .photo-upload-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .photo-preview {
+            width: 250px; /* Lebar diubah sesuai permintaan */
+            height: 300px; /* Tinggi diubah sesuai permintaan */
+            border-radius: var(--card-radius); /* Ubah dari lingkaran ke persegi panjang membulat */
+            background: var(--bg-color);
+            margin: 0 auto 20px auto; /* Atur margin untuk memusatkan dan memberi jarak bawah */
+            box-shadow: 5px 5px 10px var(--dark-shadow), -5px -5px 10px var(--light-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Kontainer untuk input password dengan ikon */
+        .password-container {
+            position: relative;
+        }
+
+        /* Penyesuaian padding untuk input di dalam kontainer password */
+        .password-container .form-input {
+            padding-right: 45px; /* Beri ruang untuk ikon */
+        }
+
+        .password-toggle-icon {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            user-select: none; /* Mencegah teks ikon terseleksi */
+        }
+
+        /* --- Gaya untuk Input File Custom --- */
+        .custom-file-input-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            padding: 8px 15px;
+            border-radius: 10px;
+            background: var(--bg-color);
+            box-shadow: inset 4px 4px 8px var(--dark-shadow),
+                        inset -4px -4px 8px var(--light-shadow);
+        }
+
+        .input-file {
+            /* Sembunyikan input file asli */
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+
+        .file-name {
+            color: var(--main-color);
+            font-size: 0.9rem;
+        }
+
+        /* --- Gaya Tombol Aksi Formulir --- */
+        .form-actions {
+            text-align: right;
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .form-actions .neumorphic-btn {
+            text-decoration: none;
+        }
+
+        .btn-simpan:hover { background-color: #a6edc3; }
+        .btn-update:hover { background-color: #a6c3ed; }
+        .btn-reset:hover { background-color: #edb4a6; }
+        .btn-cancel:hover {
+            background-color: #4a4e69;
+            color: white;
+        }
+
+        /* --- Media Queries (Responsif) --- */
+        @media (max-width: 1024px) {
+            .container {
+                padding-top: calc(var(--navbar-height-mobile) + 15px); 
+                padding-left: 15px;
+                padding-right: 15px;
+                gap: 20px;
+            }
+
+            .top-navbar {
+                position: fixed; 
+                top: 0;
+                left: 0;
+                width: 100%;
+                margin: 0;
+                padding: 10px 15px;
+                height: var(--navbar-height-mobile);
+                border-radius: 0 0 20px 20px;
+                box-shadow: 0 5px 10px var(--dark-shadow);
+            }
+            
+            .sidebar {
+                top: calc(var(--navbar-height-mobile) + 10px);
+                height: calc(100vh - var(--navbar-height-mobile) - 10px);
+                margin-right: 0;
+                width: 280px; 
+                border-radius: 0; 
+                box-shadow: 
+                    -5px 0 10px rgba(0, 0, 0, 0.1),
+                    inset 5px 0 10px var(--dark-shadow);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* --- Footer --- */
+        .site-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 0;
+            background: var(--bg-color);
+            box-shadow: 0 -8px 16px var(--dark-shadow);
+            z-index: 1000;
+            color: var(--main-color);
+            font-size: 0.9rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .footer-social a {
+            color: var(--main-color);
+            text-decoration: none;
+            margin: 0 8px;
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            background: var(--bg-color);
+            box-shadow: 3px 3px 6px var(--dark-shadow), -3px -3px 6px var(--light-shadow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .footer-social svg {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            fill: currentColor;
+        }
+
+        .footer-social a:hover {
+            color: var(--accent-color);
+            box-shadow: inset 2px 2px 4px var(--dark-shadow), inset -2px -2px 4px var(--light-shadow);
+        }
+    </style>
+</head>
+<body class="no-scroll">
+    
+    <nav class="top-navbar">
+        <div class="navbar-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Logo_Kementerian_Agama_Republik_Indonesia.svg/2048px-Logo_Kementerian_Agama_Republik_Indonesia.svg.png" alt="Logo Instansi">
+            <span>Kemenag Bangka Barat</span>
+        </div>
+        <div class="navbar-right">
+            <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-profile-container">
+                <div class="user-profile">
+                    <span class="profile-icon">👤</span>
+                </div>
+                <p class="sidebar-username">Nama Pengguna</p>
+                <button class="neumorphic-btn sidebar-login-btn">Login</button>
+            </div>
+            <nav>
+                <a href="index.html" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg></span> Beranda
+                </a>
+                <a href="identitas.html" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg></span> Identitas Instansi
+                </a>
+                <a href="adminutama.html" class="nav-item active">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span> Profil Admin Utama
+                </a>
+                <a href="adminuser.html" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span> Administrator Umum
+                </a>
+                <a href="pengaturan.html" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></span> Pengaturan Data Aplikasi
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4h-2v2h2v2h-2v2h2v2h-4V9h4V7h-4V5h4v4z"/></svg></span> Data Arsip
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg></span> Peminjaman Arsip
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z"/></svg></span> Daftar Inventaris Ruang RC
+                </a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="header">
+                <h2>Profil Admin Utama</h2>
+            </header>
+
+            <section class="form-card">
+                <form>
+                    <div class="form-grid" id="adminUtamaForm">
+                        <!-- Photo Preview dipusatkan -->
+                        <div class="form-group full-width">
+                            <div class="photo-preview" id="photoPreview">
+                                <!-- Placeholder Icon -->
+                                <svg width="50" height="50" viewBox="0 0 24 24" fill="var(--main-color)"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nama" class="form-label">Nama</label>
+                            <input type="text" id="nama" class="form-input" placeholder="Masukkan Nama Lengkap">
+                        </div>
+                        <div class="form-group">
+                            <label for="nip" class="form-label">NIP</label>
+                            <input type="text" id="nip" class="form-input" placeholder="Masukkan NIP">
+                        </div>
+                        <div class="form-group">
+                            <label for="jabatan" class="form-label">Jabatan</label>
+                            <input type="text" id="jabatan" class="form-input" placeholder="Masukkan Jabatan">
+                        </div>
+                        <div class="form-group">
+                            <label for="pangkat" class="form-label">Pangkat/Golongan</label>
+                            <input type="text" id="pangkat" class="form-input" placeholder="Contoh: IV/a">
+                        </div>
+                        <div class="form-group">
+                            <label for="tempat-lahir" class="form-label">Tempat Lahir</label>
+                            <input type="text" id="tempat-lahir" class="form-input" placeholder="Masukkan Tempat Lahir">
+                        </div>
+                        <div class="form-group">
+                            <label for="tanggal-lahir" class="form-label">Tanggal Lahir</label>
+                            <input type="date" id="tanggal-lahir" class="form-input">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="alamat" class="form-label">Alamat</label>
+                            <textarea id="alamat" class="form-input" rows="3" placeholder="Masukkan Alamat Lengkap"></textarea>
+                        </div>
+                        <!-- Input Upload Photo dipindahkan ke sini -->
+                        <div class="form-group full-width">
+                            <label class="form-label">Upload Photo</label>
+                            <div class="custom-file-input-container">
+                                <input type="file" id="upload-photo" class="input-file" accept="image/*" onchange="handleFileSelect(event)">
+                                <label for="upload-photo" class="neumorphic-btn">Pilih File...</label>
+                                <span class="file-name">Tidak ada file yang dipilih</span>
+                            </div>
+                        </div>
+                        <!-- Input Password Utama ditambahkan di sini -->
+                        <div class="form-group full-width">
+                            <label for="password-utama" class="form-label">Password Utama</label>
+                            <div class="password-container">
+                                <input type="password" id="password-utama" class="form-input" placeholder="Masukkan Password Utama">
+                                <span class="password-toggle-icon" id="togglePassword">👁️</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="simpanButton" class="neumorphic-btn btn-simpan">Simpan</button>
+                        <button type="button" id="updateButton" class="neumorphic-btn btn-update">Update</button>
+                        <button type="button" id="resetButton" class="neumorphic-btn btn-reset">Reset</button>
+                        <a href="index.html" class="neumorphic-btn btn-cancel">Cancel</a>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-address">
+                <p>Jalan Jenderal Sudirman No. 1, Muntok, Bangka Barat</p>
+            </div>
+            <div class="footer-social">
+                <a href="https://www.facebook.com/KementerianAgamaRI" title="Facebook" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.32 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z"/></svg>
+                </a>
+                <a href="https://www.instagram.com/kemenag_ri" title="Instagram" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4A3.6,3.6 0 0,0 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6A3.6,3.6 0 0,0 16.4,4H7.6M17.2,6.2A1.2,1.2 0 0,1 18.4,7.4A1.2,1.2 0 0,1 17.2,8.6A1.2,1.2 0 0,1 16,7.4A1.2,1.2 0 0,1 17.2,6.2M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>
+                </a>
+                <a href="https://www.youtube.com/channel/UC_8HPEr_VClbT9yy1x2s3tQ" title="YouTube" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24"><path d="M10,15L15.19,12L10,9V15M21.56,7.17C21.69,7.64 21.78,8.27 21.84,9.08C21.91,9.87 21.94,10.56 21.94,11.16L22,12C22,12.44 21.94,13.13 21.84,13.92C21.78,14.73 21.69,15.36 21.56,15.83C21.31,16.75 20.73,17.33 19.82,17.58C19.36,17.69 18.73,17.78 17.92,17.84C17.13,17.91 16.44,17.94 15.84,17.94L15,18H9C8.56,18 7.87,17.94 7.08,17.84C6.27,17.78 5.64,17.69 5.17,17.56C4.25,17.31 3.67,16.73 3.42,15.82C3.31,15.36 3.22,14.73 3.16,13.92C3.09,13.13 3.06,12.44 3.06,12L3,11.16C3,10.56 3.06,9.87 3.16,9.08C3.22,8.27 3.31,7.64 3.44,7.17C3.69,6.25 4.27,5.67 5.18,5.42C5.64,5.31 6.27,5.22 7.08,5.16C7.87,5.09 8.56,5.06 9.16,5.06L10,5H14C14.44,5 15.13,5.06 15.92,5.16C16.73,5.22 17.36,5.31 17.83,5.44C18.75,5.69 19.33,6.27 19.58,7.18C19.69,7.64 19.78,8.27 19.84,9.08C19.91,9.87 19.94,10.56 19.94,11.16L20,12C20,12.44 19.94,13.13 19.84,13.92C19.78,14.73 19.69,15.36 19.56,15.83C19.31,16.75 18.73,17.33 17.82,17.58C17.36,17.69 16.73,17.78 15.92,17.84C15.13,17.91 14.44,17.94 13.84,17.94L13,18H11V19H13C13.56,19 14.27,18.94 15.08,18.84C15.87,18.78 16.5,18.69 16.97,18.56C18.25,18.23 19.18,17.3 19.5,16.03C19.63,15.53 19.72,14.88 19.78,14.08C19.85,13.27 19.88,12.56 19.88,12L20,11.16C20,10.56 19.94,9.87 19.84,9.08C19.78,8.27 19.69,7.64 19.56,7.17C19.23,5.89 18.3,4.96 17.03,4.64C16.53,4.5 15.88,4.42 15.08,4.36C14.27,4.29 13.56,4.26 13,4.26H11V3.26H13C13.56,3.26 14.27,3.32 15.08,3.42C15.87,3.48 16.5,3.57 16.97,3.7C18.73,4.13 20.09,5.5 20.5,7.25C20.63,7.75 20.72,8.4 20.78,9.2C20.85,10.03 20.88,10.75 20.88,11.38L20.8,12C20.8,12.63 20.77,13.35 20.68,14.15C20.62,14.95 20.53,15.6 20.4,16.1C19.97,17.85 18.6,19.21 16.85,19.64C16.38,19.76 15.75,19.85 14.95,19.91C14.15,19.98 13.44,20.01 12.84,20.01L12,20H11V21H12C12.56,21 13.27,20.94 14.08,20.84C14.87,20.78 15.5,20.69 15.97,20.56C17.73,20.13 19.09,18.77 19.5,17.02C19.63,16.52 19.72,15.87 19.78,15.07C19.85,14.27 19.88,13.56 19.88,13L19.8,12.16C19.8,11.56 19.74,10.87 19.64,10.08C19.58,9.27 19.49,8.64 19.36,8.17C19.03,6.89 18.1,5.96 16.83,5.64C16.33,5.5 15.68,5.42 14.88,5.36C14.07,5.29 13.36,5.26 12.8,5.26H11V4.26H12.8Z"/></svg>
+                </a>
+                <a href="https://kemenag.go.id/" title="Website Kementerian Agama" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A1,1 0 0,0 10,17H11V19.93M17.9,17.39L12,11.5V13A1,1 0 0,1 11,14H9A1,1 0 0,1 8,13V9A1,1 0 0,1 9,8H13A1,1 0 0,1 14,9V11.5L19.8,5.7C19.92,6.15 20,6.62 20,7.11V17.11C20,17.21 19.97,17.3 19.95,17.39L17.9,17.39M13,19.93V18H15A1,1 0 0,0 16,17V15L19.79,11.79C19.92,11.22 20,10.62 20,10C20,6.08 16.95,2.56 13,2.07V4.07C15.89,4.56 18,7.03 18,10C18,10.3 17.95,10.59 17.88,10.88L13,15.75V19.93Z"/></svg>
+                </a>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 Record Center Kemenag. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+
+        // JavaScript untuk Toggle Sidebar
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const body = document.body;
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open'); 
+            
+            if (window.innerWidth <= 1024) {
+                body.classList.toggle('no-scroll'); 
+            }
+
+            if (sidebar.classList.contains('open')) {
+                menuToggle.innerHTML = '✕'; 
+            } else {
+                menuToggle.innerHTML = '☰'; 
+            }
+        });
+        
+        window.addEventListener('resize', () => {
+             if (window.innerWidth > 1024) {
+                 body.classList.remove('no-scroll');
+             } else if (sidebar.classList.contains('open')) {
+                 body.classList.add('no-scroll');
+             }
+         });
+         
+         body.classList.remove('no-scroll');
+
+        // JavaScript untuk toggle visibilitas password
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password-utama');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        // Fungsi gabungan untuk menangani pemilihan file (nama file dan pratinjau)
+        function handleFileSelect(event) {
+            const input = event.target;
+            const fileNameSpan = input.nextElementSibling.nextElementSibling; // Menargetkan span .file-name
+            const previewContainer = document.getElementById('photoPreview');
+
+            if (input.files && input.files.length > 0) {
+                const file = input.files[0];
+                fileNameSpan.textContent = file.name; // Update nama file
+
+                // Tampilkan pratinjau gambar
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewContainer.innerHTML = `<img src="${e.target.result}" alt="Photo Preview">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileNameSpan.textContent = 'Tidak ada file yang dipilih';
+                // Kembalikan ke placeholder jika tidak ada file dipilih
+                previewContainer.innerHTML = `<svg width="50" height="50" viewBox="0 0 24 24" fill="var(--main-color)"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+            }
+        }
+
+        // --- Integrasi Supabase ---
+        const supabaseUrl = 'https://vgrquicbummoaquekepx.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZncnF1aWNidW1tb2FxdWVrZXB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0MjUzOTgsImV4cCI6MjA3ODAwMTM5OH0.Dx5e9sR9fAN5pKGfGWv7niDQy55LYp5knHpfAPAGN8A';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+        // Variabel untuk menyimpan ID data yang sedang ditampilkan
+        let currentAdminId = null;
+
+        // Fungsi untuk memuat data Admin Utama dari Supabase
+        async function loadAdminData() {
+            // Ambil data terakhir yang diinput berdasarkan tanggal pembuatan
+            const { data, error } = await supabase
+                .from('tabeladminutama')
+                .select('*')
+                .order('created_at', { ascending: false }) // Ambil yang terbaru
+                .limit(1)
+                .single(); // Ambil sebagai satu objek, bukan array
+
+            if (error && error.code !== 'PGRST116') { // Abaikan error jika tabel kosong
+                console.error('Error loading admin data:', error);
+                alert('Gagal memuat data admin.');
+                return;
+            }
+
+            if (data) {
+                // Simpan ID dari data yang dimuat
+                currentAdminId = data.id;
+
+                // Isi form dengan data yang didapat
+                document.getElementById('nama').value = data.nama || '';
+                document.getElementById('nip').value = data.nip || '';
+                document.getElementById('jabatan').value = data.jabatan || '';
+                document.getElementById('pangkat').value = data.pangkat || '';
+                document.getElementById('tempat-lahir').value = data.tempat_lahir || '';
+                document.getElementById('tanggal-lahir').value = data.tanggal_lahir || '';
+                document.getElementById('alamat').value = data.alamat || '';
+                document.getElementById('password-utama').value = data.password || '';
+
+                // Tampilkan foto jika ada URL-nya
+                if (data.photo) {
+                    const photoPreview = document.getElementById('photoPreview');
+                    photoPreview.innerHTML = `<img src="${data.photo}" alt="Pratinjau Foto">`;
+                }
+            }
+        }
+
+
+        const simpanButton = document.getElementById('simpanButton');
+
+        simpanButton.addEventListener('click', async () => {
+            // Ambil semua nilai dari form
+            const nama = document.getElementById('nama').value;
+            const nip = document.getElementById('nip').value;
+            const jabatan = document.getElementById('jabatan').value;
+            const pangkat = document.getElementById('pangkat').value;
+            const tempatLahir = document.getElementById('tempat-lahir').value;
+            const tanggalLahir = document.getElementById('tanggal-lahir').value;
+            const alamat = document.getElementById('alamat').value;
+            const password = document.getElementById('password-utama').value;
+            const photoFile = document.getElementById('upload-photo').files[0];
+
+            // Validasi sederhana
+            if (!nama || !password) {
+                alert('Nama dan Password Utama harus diisi!');
+                return;
+            }
+
+            let photoUrl = null;
+
+            // 1. Upload foto jika ada
+            if (photoFile) {
+                const filePath = `public/${Date.now()}-${photoFile.name}`;
+                const { data: uploadData, error: uploadError } = await supabase
+                    .storage
+                    .from('aset')
+                    .upload(filePath, photoFile);
+
+                if (uploadError) {
+                    console.error('Error uploading file:', uploadError);
+                    alert(`Gagal mengunggah file: ${uploadError.message}`);
+                    return;
+                }
+
+                // 2. Dapatkan URL publik dari file yang diunggah
+                const { data: publicUrlData } = supabase
+                    .storage
+                    .from('aset')
+                    .getPublicUrl(filePath);
+                
+                photoUrl = publicUrlData.publicUrl;
+            }
+
+            // 3. Simpan data ke tabel 'tabeladminutama'
+            const { data, error } = await supabase
+                .from('tabeladminutama')
+                .insert([{ 
+                    nama: nama, 
+                    nip: nip, 
+                    jabatan: jabatan, 
+                    pangkat: pangkat, 
+                    tempat_lahir: tempatLahir, 
+                    tanggal_lahir: tanggalLahir, 
+                    alamat: alamat, 
+                    password: password,
+                    photo: photoUrl 
+                }]);
+
+            if (error) {
+                console.error('Error inserting data:', error);
+                alert(`Gagal menyimpan data: ${error.message}`);
+            } else {
+                alert('Data Admin Utama berhasil disimpan!');
+                document.querySelector('form').reset(); // Reset form setelah berhasil
+                handleFileSelect({ target: document.getElementById('upload-photo') }); // Reset preview
+            }
+        });
+
+        const updateButton = document.getElementById('updateButton');
+
+        updateButton.addEventListener('click', async () => {
+            // 1. Periksa apakah ada data yang bisa di-update
+            if (!currentAdminId) {
+                alert('Tidak ada data untuk diperbarui. Silakan "Simpan" data baru terlebih dahulu.');
+                return;
+            }
+
+            // 2. Ambil semua nilai dari form
+            const nama = document.getElementById('nama').value;
+            const nip = document.getElementById('nip').value;
+            const jabatan = document.getElementById('jabatan').value;
+            const pangkat = document.getElementById('pangkat').value;
+            const tempatLahir = document.getElementById('tempat-lahir').value;
+            const tanggalLahir = document.getElementById('tanggal-lahir').value;
+            const alamat = document.getElementById('alamat').value;
+            const password = document.getElementById('password-utama').value;
+            const photoFile = document.getElementById('upload-photo').files[0];
+
+            if (!nama || !password) {
+                alert('Nama dan Password Utama harus diisi!');
+                return;
+            }
+
+            // Siapkan objek data untuk diupdate
+            const dataToUpdate = {
+                nama: nama,
+                nip: nip,
+                jabatan: jabatan,
+                pangkat: pangkat,
+                tempat_lahir: tempatLahir,
+                tanggal_lahir: tanggalLahir,
+                alamat: alamat,
+                password: password,
+            };
+
+            // 3. Proses upload foto baru jika ada
+            if (photoFile) {
+                const filePath = `public/${currentAdminId}-${Date.now()}-${photoFile.name}`;
+                const { data: uploadData, error: uploadError } = await supabase
+                    .storage
+                    .from('aset')
+                    .upload(filePath, photoFile, {
+                        upsert: true // Ganti file jika sudah ada
+                    });
+
+                if (uploadError) {
+                    console.error('Error uploading new photo:', uploadError);
+                    alert(`Gagal mengunggah foto baru: ${uploadError.message}`);
+                    return;
+                }
+
+                const { data: publicUrlData } = supabase.storage.from('aset').getPublicUrl(filePath);
+                dataToUpdate.photo = publicUrlData.publicUrl;
+            }
+
+            // 4. Kirim perintah update ke Supabase dengan menargetkan ID yang benar
+            const { data, error } = await supabase
+                .from('tabeladminutama')
+                .update(dataToUpdate)
+                .eq('id', currentAdminId); // <-- INI BAGIAN PENTINGNYA
+
+            if (error) {
+                console.error('Error updating data:', error);
+                alert(`Gagal memperbarui data: ${error.message}`);
+            } else {
+                alert('Data Admin Utama berhasil diperbarui!');
+                loadAdminData(); // Muat ulang data untuk memastikan form menampilkan data terbaru
+            }
+        });
+
+        const resetButton = document.getElementById('resetButton');
+
+        resetButton.addEventListener('click', async () => {
+            // Fungsi untuk membersihkan form
+            const clearForm = () => {
+                document.querySelector('form').reset();
+                handleFileSelect({ target: document.getElementById('upload-photo') }); // Reset preview foto
+                currentAdminId = null; // Hapus ID yang tersimpan
+            };
+
+            // Jika tidak ada data yang dimuat, cukup bersihkan form
+            if (!currentAdminId) {
+                alert('Form akan dibersihkan.');
+                clearForm();
+                return;
+            }
+
+            // Minta konfirmasi sebelum menghapus
+            const isConfirmed = confirm('Apakah Anda yakin ingin menghapus data Admin Utama ini dari database? Tindakan ini tidak dapat dibatalkan.');
+
+            if (isConfirmed) {
+                const { error } = await supabase
+                    .from('tabeladminutama')
+                    .delete()
+                    .eq('id', currentAdminId);
+
+                if (error) {
+                    console.error('Error deleting data:', error);
+                    alert(`Gagal menghapus data: ${error.message}`);
+                } else {
+                    alert('Data Admin Utama berhasil dihapus.');
+                    clearForm(); // Bersihkan form setelah berhasil hapus
+                }
+            }
+        });
+
+        // Panggil fungsi untuk memuat data saat halaman selesai dimuat
+        document.addEventListener('DOMContentLoaded', loadAdminData);
+    </script>
+</body>
+</html>
+
             --light-shadow: #ffffff;
             --dark-shadow: #a3b1c6;
             --card-radius: 20px;
@@ -678,3 +1588,4 @@
     </script>
 </body>
 </html>
+
