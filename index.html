@@ -153,6 +153,16 @@
             border-radius: var(--card-radius); 
             background: var(--bg-color);
             box-shadow: 15px 15px 30px var(--dark-shadow); 
+
+            /* Jadikan flex container untuk mengatur anak elemen */
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar nav {
+            flex-grow: 1; /* Biarkan nav mengisi sisa ruang */
+            min-height: 0; /* Diperlukan agar overflow bekerja di dalam flex container */
+            overflow-y: auto; /* Aktifkan scroll vertikal jika konten menu melebihi tinggi */
+            padding-right: 10px; /* Beri sedikit ruang untuk scrollbar */
         }
 
         .sidebar.open {
