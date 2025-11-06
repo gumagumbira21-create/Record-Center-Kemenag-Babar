@@ -145,6 +145,17 @@
             background: var(--bg-color);
             box-shadow: 15px 15px 30px var(--dark-shadow); 
         }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar nav {
+            flex-grow: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
 
         .sidebar.open {
             transform: translateX(0);
