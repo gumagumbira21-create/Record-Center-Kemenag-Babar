@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Center Kemenag Babar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variabel CSS untuk Tema Neumorphism dan Tinggi Elemen */
+        :root {
+            --bg-color: #e0e5ec;
+            --main-color: #4a4e69;
+            --accent-color: #151596;
+            --light-shadow: #ffffff;
+            --dark-shadow: #a3b1c6;
+            --card-radius: 20px;
+            --transition-speed: 0.3s;
+            /* Tinggi dan margin yang dihitung secara eksplisit */
+            --navbar-margin-top: 20px;
+            --navbar-height-desktop: 80px; 
+            --navbar-height-mobile: 70px; 
+            --navbar-full-height-desktop: calc(var(--navbar-margin-top) + var(--navbar-height-desktop)); /* 100px */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--main-color);
+            padding-bottom: 80px; /* Tambahkan ruang untuk footer */
+            min-height: 100vh;
+        }
+        
+        /* Kelas untuk mencegah scrolling saat menu terbuka */
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        /* --- Navbar Atas (Menggunakan Fixed Position untuk Stabilitas) --- */
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            
+            /* FIX 1: Gunakan position: fixed/sticky di desktop */
+            position: fixed; 
+            width: calc(100% - 40px); /* Lebar layar dikurangi 20px kiri-kanan */
+            top: var(--navbar-margin-top); /* 20px dari atas */
+            left: var(--navbar-margin-top); /* 20px dari kiri */
+            height: var(--navbar-height-desktop); /* Tinggi eksplisit 80px */
+            margin: 0; /* Hapus margin asli */
+
+            border-radius: var(--card-radius);
+            background: var(--bg-color);
+            box-shadow: 
+                9px 9px 16px var(--dark-shadow),
+                -9px -9px 16px var(--light-shadow);
+            z-index: 1001; 
+            transition: all var(--transition-speed) ease;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .navbar-logo img {
+            width: 40px;
+            margin-right: 15px;
+            border-radius: 50%;
+            box-shadow: 2px 2px 5px var(--dark-shadow), -2px -2px 5px var(--light-shadow);
+        }
+
+        /* --- Neumorphism Base Styles --- */
+        .neumorphic {
+            border-radius: var(--card-radius);
+            background: var(--bg-color);
+            box-shadow: 
+                9px 9px 16px var(--dark-shadow),
+                -9px -9px 16px var(--light-shadow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* --- Tata Letak Utama & Kontainer --- */
+        .container {
+            /* Tambahkan padding atas untuk mengimbangi fixed navbar */
+            padding-top: calc(var(--navbar-full-height-desktop) + 20px); 
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 20px;
+            gap: 30px;
+        }
+        
+        /* Hamburger Menu & Profile */
+        .menu-toggle {
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            border-radius: 50%;
+            background: var(--bg-color);
+            box-shadow: 
+                7px 7px 14px var(--dark-shadow),
+                -7px -7px 14px var(--light-shadow);
+            border: none;
+            font-size: 1.5rem;
+            line-height: 1;
+            margin-left: 20px; 
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .menu-toggle:active {
+            box-shadow: 
+                inset 5px 5px 10px var(--dark-shadow),
+                inset -5px -5px 10px var(--light-shadow);
+        }
+
+        /* Sidebar/Navigasi */
+        .sidebar {
+            position: fixed;
+            /* FIX 2: Hitung posisi TOP yang tepat (100px) */
+            top: calc(var(--navbar-full-height-desktop) + 20px); /* 120px, untuk memberi jarak dari navbar */
+            right: 0; 
+            width: 250px;
+            padding: 30px 20px;
+            
+            /* FIX 3: Hitung Tinggi yang tepat */
+            /* Tinggi disesuaikan dengan posisi top yang baru */
+            height: calc(100vh - var(--navbar-full-height-desktop) - 20px); 
+            
+            z-index: 1002; /* FIX: Naikkan z-index agar di atas footer (1000) dan navbar (1001) */
+            margin-right: 20px; /* Jarak dari tepi kanan, agar rata dengan navbar */
+
+            transform: translateX(120%); /* Sembunyikan lebih jauh untuk memastikan hilang */
+            transition: transform 0.4s ease-in-out;
+            
+            /* Tampilan Neumorphism Sidebar */
+            border-radius: var(--card-radius); 
+            background: var(--bg-color);
+            box-shadow: 15px 15px 30px var(--dark-shadow); 
+        }
+
+        .sidebar.open {
+            transform: translateX(0); /* Tampilkan saat menu terbuka */
+        }
+
+        /* --- Kontainer Profil di Sidebar --- */
+        .sidebar-profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--dark-shadow);
+        }
+
+        .sidebar-username {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-login-btn {
+            width: 80%;
+            padding: 12px;
+            font-weight: 700;
+        }
+
+        /* ... Nav Item Styles (Tetap Sama) ... */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            text-decoration: none;
+            font-weight: 500;
+            color: var(--main-color);
+            border-radius: 15px;
+            box-shadow: 5px 5px 10px var(--dark-shadow), -5px -5px 10px var(--light-shadow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .nav-item:hover {
+            color: var(--accent-color);
+            box-shadow: inset 3px 3px 6px var(--dark-shadow), inset -3px -3px 6px var(--light-shadow);
+        }
+
+        .nav-item.active {
+            box-shadow: inset 5px 5px 10px var(--dark-shadow), inset -5px -5px 10px var(--light-shadow);
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+        
+        .icon {
+            margin-right: 20px; /* Tambah jarak antara ikon dan teks */
+            font-size: 1.2rem;
+            display: inline-flex; /* Memastikan ikon terpusat vertikal */
+            align-items: center;
+        }
+        /* ... Konten Utama dan Card Grid (Tetap Sama) ... */
+        .content { flex-grow: 1; }
+        .navbar-right { display: flex; align-items: center; }
+        .header { 
+            display: flex; 
+            flex-direction: column; /* Susun item secara vertikal */
+            align-items: center; /* Pusatkan item secara horizontal */
+            padding: 15px 0 30px 0; 
+            text-align: center; /* Pastikan teks di dalamnya juga terpusat */
+        }
+
+        .app-title {
+            font-family: 'Playfair Display', serif; /* Font serif seperti Times New Roman */
+            font-size: 5rem; /* Ukuran font diperbesar */
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 0;
+            line-height: 1.1;
+            /* Efek 3D dengan text-shadow berlapis */
+            text-shadow: 
+                1px 1px 1px var(--dark-shadow),
+                2px 2px 1px var(--dark-shadow),
+                3px 3px 1px var(--dark-shadow),
+                4px 4px 1px var(--dark-shadow),
+                5px 5px 1px var(--dark-shadow),
+                6px 6px 1px var(--dark-shadow),
+                7px 7px 10px rgba(0,0,0,0.2); /* Bayangan terakhir untuk kelembutan */
+        }
+
+        .app-subtitle {
+            font-size: 1.1rem;
+            font-weight: 300;
+            margin-bottom: 25px;
+        }
+
+        .user-profile { 
+            width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 7px 7px 14px var(--dark-shadow), -7px -7px 14px var(--light-shadow);
+        }
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px; }
+        .card { padding: 30px; text-align: center; border-radius: var(--card-radius); background: var(--bg-color); box-shadow: 9px 9px 16px var(--dark-shadow), -9px -9px 16px var(--light-shadow); transition: all var(--transition-speed) ease; }
+        
+        .card:hover {
+            cursor: pointer;
+            box-shadow: inset 5px 5px 10px var(--dark-shadow),
+                        inset -5px -5px 10px var(--light-shadow);
+            background-color: #a6edc3; /* Tambahkan warna latar yang lembut saat hover */
+        }
+        
+        /* Penyesuaian untuk konten di dalam kartu menu */
+        .card h3 {
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+        .card-icon {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .card-icon img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain; /* Agar gambar tidak terdistorsi */
+        }
+        .archive-count {
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+        .archive-count strong {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .data-lg { font-size: 4rem; font-weight: 700; margin: 10px 0 20px 0; color: var(--accent-color); }
+        .data-md { font-size: 2.5rem; font-weight: 700; margin-top: 15px; }
+        .neumorphic-btn { padding: 10px 20px; border: none; cursor: pointer; font-weight: 500; color: var(--main-color); border-radius: 12px; background: var(--bg-color); box-shadow: 5px 5px 10px var(--dark-shadow), -5px -5px 10px var(--light-shadow); transition: all var(--transition-speed) ease; }
+
+        .neumorphic-btn:hover {
+            /* Efek hover: bayangan sedikit berkurang, memberi kesan 'terangkat' */
+            box-shadow: 3px 3px 6px var(--dark-shadow),
+                        -3px -3px 6px var(--light-shadow);
+        }
+
+        .neumorphic-btn:active {
+            /* Efek 'tertekan' saat diklik */
+            box-shadow: inset 4px 4px 8px var(--dark-shadow),
+                        inset -4px -4px 8px var(--light-shadow);
+        }
+
+
+        /* --- Media Queries (Responsif) --- */
+        @media (max-width: 1024px) {
+            .container {
+                /* Padding atas disesuaikan untuk navbar mobile */
+                padding-top: calc(var(--navbar-height-mobile) + 15px); 
+                padding-left: 15px;
+                padding-right: 15px;
+                gap: 20px;
+            }
+
+            .top-navbar {
+                /* FIX Mobile: Buat navbar menempel penuh di atas */
+                position: fixed; 
+                top: 0;
+                left: 0;
+                width: 100%; /* Lebar penuh */
+                margin: 0; /* Hapus margin */
+                padding: 10px 15px;
+                height: var(--navbar-height-mobile); /* Tinggi baru 70px */
+                border-radius: 0 0 20px 20px; /* Beri radius di bawah */
+                box-shadow: 0 5px 10px var(--dark-shadow);
+            }
+            
+            .sidebar {
+                /* FIX Mobile: Posisi tepat di bawah navbar mobile */
+                top: calc(var(--navbar-height-mobile) + 10px); /* 80px, untuk memberi jarak */
+                height: calc(100vh - var(--navbar-height-mobile) - 10px);
+                margin-right: 0; /* Hapus margin kanan di mobile */
+                width: 280px; 
+                border-radius: 0; 
+                box-shadow: 
+                    -5px 0 10px rgba(0, 0, 0, 0.1),
+                    inset 5px 0 10px var(--dark-shadow); /* Shadow dari sisi kiri */
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .card-grid {
+                grid-template-columns: 1fr; 
+            }
+        }
+
+        /* --- Carousel Styles --- */
+        .carousel-container {
+            position: relative;
+            max-width: 100%;
+            margin-bottom: 40px; /* Jarak ke card-grid */
+            overflow: hidden; /* Pastikan gambar tidak keluar dari container */
+            border-radius: var(--card-radius);
+        }
+
+        .carousel-inner {
+            display: flex;
+            /* Transisi untuk efek geser yang mulus */
+            transition: transform 0.8s ease-in-out; 
+        }
+
+        .carousel-slide {
+            /* Pastikan setiap slide fleksibel dan mengambil 100% lebar container */
+            min-width: 100%;
+            height: 450px; /* Tetapkan tinggi yang konsisten untuk desktop */
+            box-sizing: border-box;
+            position: relative; /* Diperlukan untuk memposisikan teks overlay */
+            overflow: hidden; /* Sembunyikan bagian gambar yang zoom keluar dari slide */
+            border-radius: var(--card-radius); /* Pindahkan radius ke sini */
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%; /* Buat gambar mengisi tinggi slide */
+            vertical-align: middle; 
+            object-fit: cover; /* Pangkas gambar agar pas tanpa distorsi */
+            transition: transform 0.5s ease, filter 0.5s ease; /* Transisi untuk zoom dan redup */
+        }
+
+        /* Teks Overlay di atas Gambar */
+        .carousel-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            opacity: 0; /* Sembunyikan secara default */
+            transition: opacity 0.5s ease;
+            pointer-events: none; /* Agar tidak mengganggu interaksi mouse lain */
+            text-align: center;
+            width: 80%; /* Batasi lebar teks */
+        }
+
+        /* Efek Hover */
+        .carousel-slide:hover img {
+            transform: scale(1.1); /* Efek zoom */
+            filter: brightness(60%); /* Efek redup */
+        }
+        .carousel-slide:hover .carousel-text {
+            opacity: 1; /* Tampilkan teks saat hover */
+        }
+
+        /* Tombol Next & previous */
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%; /* Posisi vertikal di tengah */
+            width: 50px; /* Lebar tombol */
+            height: 50px; /* Tinggi tombol */
+            margin-top: -25px; /* Setengah dari tinggi untuk sentralisasi vertikal */
+            color: var(--main-color); /* Warna ikon disesuaikan dengan tema */
+            font-weight: bold;
+            font-size: 1.5rem;
+            transition: all var(--transition-speed) ease;
+            border-radius: 50%; /* Membuat tombol menjadi lingkaran */
+            user-select: none;
+            
+            /* Efek Neumorphic (3D) */
+            background: var(--bg-color);
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.25), /* Bayangan hitam di kanan bawah */
+                        -5px -5px 10px #ffffff; /* Bayangan terang untuk menjaga efek 3D */
+            
+            /* Pusatkan ikon panah di dalam tombol */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .next {
+            right: 0;
+            margin-right: 20px; /* Beri jarak dari tepi kanan */
+        }
+        .prev {
+            left: 0;
+            margin-left: 20px; /* Beri jarak dari tepi kiri */
+        }
+
+        .prev:active, .next:active {
+            /* Efek 'tertekan' saat diklik */
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.25),
+                        inset -4px -4px 8px #ffffff;
+            color: var(--accent-color);
+        }
+
+        /* Penyesuaian tinggi carousel untuk layar yang lebih kecil */
+        @media (max-width: 1024px) {
+            .carousel-slide {
+                height: 350px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .carousel-slide {
+                height: 250px;
+            }
+        }
+
+
+        /* --- Footer --- */
+        .site-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 0;
+            background: var(--bg-color);
+            /* Shadow ke atas */
+            box-shadow: 0 -8px 16px var(--dark-shadow);
+            z-index: 1000;
+            color: var(--main-color);
+            font-size: 0.9rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .footer-social a {
+            color: var(--main-color);
+            text-decoration: none;
+            margin: 0 8px;
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            background: var(--bg-color);
+            box-shadow: 3px 3px 6px var(--dark-shadow), -3px -3px 6px var(--light-shadow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .footer-social svg {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            fill: currentColor; /* Mengambil warna dari parent (<a>) */
+        }
+
+        .footer-social a:hover {
+            color: var(--accent-color);
+            box-shadow: inset 2px 2px 4px var(--dark-shadow), inset -2px -2px 4px var(--light-shadow);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column; /* Awalnya untuk mobile */
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body class="no-scroll">
+    
+    <nav class="top-navbar">
+        <div class="navbar-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Logo_Kementerian_Agama_Republik_Indonesia.svg/2048px-Logo_Kementerian_Agama_Republik_Indonesia.svg.png" alt="Logo Instansi">
+            <span>Nama Instansi</span>
+        </div>
+        <div class="navbar-right">
+            <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-profile-container">
+                <div class="user-profile">
+                    <span class="profile-icon">👤</span>
+                </div>
+                <p class="sidebar-username">Nama Pengguna</p>
+                <button class="neumorphic-btn sidebar-login-btn">Login</button>
+            </div>
+            <nav>
+                <a href="#" class="nav-item active">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg></span> Beranda
+                </a>
+                <a href="identitas.html" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg></span> Identitas Instansi
+                </a>
+                <a href="adminutama.html" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span> Profil Admin Utama
+                </a>
+                <a href="adminuser.html" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span> Administrator Umum
+                </a>
+                <a href="pengaturan.html" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></span> Pengaturan Data Aplikasi
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm12 4h-2v2h2v2h-2v2h2v2h-4V9h4V7h-4V5h4v4z"/></svg></span> Data Arsip
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg></span> Peminjaman Arsip
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z"/></svg></span> Daftar Inventaris Ruang RC
+                </a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="header">
+                <h1 class="app-title">SIMPAI</h1>
+                <p class="app-subtitle">(Sistem Informasi Manajemen Pengelolaan Arsip Inaktif)</p>
+                <h2 class="welcome-message">Selamat Datang, Pengguna!</h2>
+            </header>
+
+            <!-- Carousel Section -->
+            <section class="carousel-container">
+                <div class="carousel-inner">
+                    <div class="carousel-slide">
+                        <img src="carousel1.png" alt="Gambar Carousel 1">
+                        <div class="carousel-text">Menjadi pusat pengelolaan arsip yang profesional, tertib, aman, dan terpercaya dalam mendukung tata kelola pemerintahan yang transparan dan akuntabel.</div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="carousel2.png" alt="Gambar Carousel 2">
+                        <div class="carousel-text">Meningkatkan tertib administrasi dan manajemen arsip melalui penerapan sistem pengelolaan arsip</div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="carousel3.jpg" alt="Gambar Carousel 3">
+                        <div class="carousel-text">Mengembangkan pengelolaan arsip berbasis teknologi informasi untuk mendukung efisiensi, keamanan, dan kemudahan akses arsip inaktif</div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="carousel4.jpg" alt="Gambar Carousel 4">
+                        <div class="carousel-text">Meningkatkan kompetensi sumber daya manusia kearsipan melalui pelatihan, pembinaan, dan peningkatan profesionalisme arsiparis</div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="carousel5.jpg" alt="Gambar Carousel 5">
+                        <div class="carousel-text">Menjamin keamanan, keutuhan, dan kerahasiaan arsip guna menjaga nilai guna dan autentisitas informasi sebagai bukti akuntabilitas instansi</div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="carousel6.jpg" alt="Gambar Carousel 6">
+                        <div class="carousel-text">Mendorong budaya sadar arsip dan ramah lingkungan dengan penerapan prinsip efisiensi ruang, digitalisasi arsip, dan pengelolaan berkelanjutan</div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+
+            </section>
+
+            <section class="card-grid">
+                <div class="card">
+                    <span class="card-icon"><img src="tu.png" alt="Ikon Subbag Tata Usaha"></span>
+                    <h3>Subbag Tata Usaha</h3>
+                    <p class="archive-count"><strong>125</strong> Arsip</p>
+                    <button class="neumorphic-btn">Detail</button>
+                </div>
+                <div class="card">
+                    <span class="card-icon"><img src="bimas.png" alt="Ikon Bimas Islam"></span>
+                    <h3>Bimas Islam</h3>
+                    <p class="archive-count"><strong>88</strong> Arsip</p>
+                    <button class="neumorphic-btn">Detail</button>
+                </div>
+                <div class="card">
+                    <span class="card-icon"><img src="papkis.png" alt="Ikon Papkis"></span>
+                    <h3>Papkis</h3>
+                    <p class="archive-count"><strong>97</strong> Arsip</p>
+                    <button class="neumorphic-btn">Detail</button>
+                </div>
+                <div class="card">
+                    <span class="card-icon"><img src="penmad.png" alt="Ikon Penmad"></span>
+                    <h3>Penmad</h3>
+                    <p class="archive-count"><strong>210</strong> Arsip</p>
+                    <button class="neumorphic-btn">Detail</button>
+                </div>
+                <div class="card">
+                    <span class="card-icon"><img src="zakat.png" alt="Ikon Zakat dan Waqaf"></span>
+                    <h3>Zakat dan Waqaf</h3>
+                    <p class="archive-count"><strong>45</strong> Arsip</p>
+                    <button class="neumorphic-btn">Detail</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-address">
+                <p>Jalan Jenderal Sudirman No. 1, Muntok, Bangka Barat</p>
+            </div>
+            <div class="footer-social">
+                <a href="https://www.facebook.com/KementerianAgamaRI" title="Facebook" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.32 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z"/></svg>
+                </a>
+                <a href="https://www.instagram.com/kemenag_ri" title="Instagram" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4A3.6,3.6 0 0,0 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6A3.6,3.6 0 0,0 16.4,4H7.6M17.2,6.2A1.2,1.2 0 0,1 18.4,7.4A1.2,1.2 0 0,1 17.2,8.6A1.2,1.2 0 0,1 16,7.4A1.2,1.2 0 0,1 17.2,6.2M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>
+                </a>
+                <a href="https://www.youtube.com/channel/UC_8HPEr_VClbT9yy1x2s3tQ" title="YouTube" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24"><path d="M10,15L15.19,12L10,9V15M21.56,7.17C21.69,7.64 21.78,8.27 21.84,9.08C21.91,9.87 21.94,10.56 21.94,11.16L22,12C22,12.44 21.94,13.13 21.84,13.92C21.78,14.73 21.69,15.36 21.56,15.83C21.31,16.75 20.73,17.33 19.82,17.58C19.36,17.69 18.73,17.78 17.92,17.84C17.13,17.91 16.44,17.94 15.84,17.94L15,18H9C8.56,18 7.87,17.94 7.08,17.84C6.27,17.78 5.64,17.69 5.17,17.56C4.25,17.31 3.67,16.73 3.42,15.82C3.31,15.36 3.22,14.73 3.16,13.92C3.09,13.13 3.06,12.44 3.06,12L3,11.16C3,10.56 3.06,9.87 3.16,9.08C3.22,8.27 3.31,7.64 3.44,7.17C3.69,6.25 4.27,5.67 5.18,5.42C5.64,5.31 6.27,5.22 7.08,5.16C7.87,5.09 8.56,5.06 9.16,5.06L10,5H14C14.44,5 15.13,5.06 15.92,5.16C16.73,5.22 17.36,5.31 17.83,5.44C18.75,5.69 19.33,6.27 19.58,7.18C19.69,7.64 19.78,8.27 19.84,9.08C19.91,9.87 19.94,10.56 19.94,11.16L20,12C20,12.44 19.94,13.13 19.84,13.92C19.78,14.73 19.69,15.36 19.56,15.83C19.31,16.75 18.73,17.33 17.82,17.58C17.36,17.69 16.73,17.78 15.92,17.84C15.13,17.91 14.44,17.94 13.84,17.94L13,18H11V19H13C13.56,19 14.27,18.94 15.08,18.84C15.87,18.78 16.5,18.69 16.97,18.56C18.25,18.23 19.18,17.3 19.5,16.03C19.63,15.53 19.72,14.88 19.78,14.08C19.85,13.27 19.88,12.56 19.88,12L20,11.16C20,10.56 19.94,9.87 19.84,9.08C19.78,8.27 19.69,7.64 19.56,7.17C19.23,5.89 18.3,4.96 17.03,4.64C16.53,4.5 15.88,4.42 15.08,4.36C14.27,4.29 13.56,4.26 13,4.26H11V3.26H13C13.56,3.26 14.27,3.32 15.08,3.42C15.87,3.48 16.5,3.57 16.97,3.7C18.73,4.13 20.09,5.5 20.5,7.25C20.63,7.75 20.72,8.4 20.78,9.2C20.85,10.03 20.88,10.75 20.88,11.38L20.8,12C20.8,12.63 20.77,13.35 20.68,14.15C20.62,14.95 20.53,15.6 20.4,16.1C19.97,17.85 18.6,19.21 16.85,19.64C16.38,19.76 15.75,19.85 14.95,19.91C14.15,19.98 13.44,20.01 12.84,20.01L12,20H11V21H12C12.56,21 13.27,20.94 14.08,20.84C14.87,20.78 15.5,20.69 15.97,20.56C17.73,20.13 19.09,18.77 19.5,17.02C19.63,16.52 19.72,15.87 19.78,15.07C19.85,14.27 19.88,13.56 19.88,13L19.8,12.16C19.8,11.56 19.74,10.87 19.64,10.08C19.58,9.27 19.49,8.64 19.36,8.17C19.03,6.89 18.1,5.96 16.83,5.64C16.33,5.5 15.68,5.42 14.88,5.36C14.07,5.29 13.36,5.26 12.8,5.26H11V4.26H12.8Z"/></svg>
+                </a>
+                <a href="https://kemenag.go.id/" title="Website Kementerian Agama" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A1,1 0 0,0 10,17H11V19.93M17.9,17.39L12,11.5V13A1,1 0 0,1 11,14H9A1,1 0 0,1 8,13V9A1,1 0 0,1 9,8H13A1,1 0 0,1 14,9V11.5L19.8,5.7C19.92,6.15 20,6.62 20,7.11V17.11C20,17.21 19.97,17.3 19.95,17.39L17.9,17.39M13,19.93V18H15A1,1 0 0,0 16,17V15L19.79,11.79C19.92,11.22 20,10.62 20,10C20,6.08 16.95,2.56 13,2.07V4.07C15.89,4.56 18,7.03 18,10C18,10.3 17.95,10.59 17.88,10.88L13,15.75V19.93Z"/></svg>
+                </a>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 Record Center Kemenag. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript untuk Toggle Sidebar
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const body = document.body;
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open'); 
+            
+            // Toggle kelas 'no-scroll' pada body
+            // Di desktop, kita tidak perlu no-scroll karena navbar fixed
+            if (window.innerWidth <= 1024) {
+                body.classList.toggle('no-scroll'); 
+            }
+
+            // Ubah ikon tombol toggle
+            if (sidebar.classList.contains('open')) {
+                menuToggle.innerHTML = '✕'; 
+            } else {
+                menuToggle.innerHTML = '☰'; 
+            }
+        });
+        
+        // Atur ulang no-scroll jika ukuran jendela diubah
+        window.addEventListener('resize', () => {
+             if (window.innerWidth > 1024) {
+                 body.classList.remove('no-scroll');
+             } else if (sidebar.classList.contains('open')) {
+                 body.classList.add('no-scroll');
+             }
+         });
+         
+         // Hapus kelas no-scroll saat inisialisasi (jika ada)
+         body.classList.remove('no-scroll');
+
+        // --- JavaScript untuk Carousel ---
+        const carouselInner = document.querySelector('.carousel-inner');
+        const slides = document.querySelectorAll('.carousel-slide');
+        let currentIndex = 0; // Menggunakan nama variabel yang konsisten
+        let slideInterval;
+
+        // Fungsi utama untuk menampilkan slide
+        function updateCarouselPosition() {
+            // Handle wrap-around (jika sudah di akhir, kembali ke awal, dan sebaliknya)
+            if (currentIndex >= slides.length) { currentIndex = 0; }
+            if (currentIndex < 0) { currentIndex = slides.length - 1; }
+
+            // Hitung pergeseran dan terapkan transform ke inner container
+            const offset = -currentIndex * 100; // Perbaikan: menggunakan currentIndex
+            carouselInner.style.transform = `translateX(${offset}%)`;
+        }
+
+        // Fungsi untuk navigasi manual (dipanggil oleh tombol prev/next)
+        function plusSlides(n) {
+            // Hentikan interval otomatis agar tidak bentrok dengan klik manual
+            clearInterval(slideInterval); 
+            // Pindahkan slide
+            currentIndex += n;
+            updateCarouselPosition();
+            // Mulai lagi interval otomatis setelah interaksi manual
+            startSlideShow(); 
+        }
+
+        // Fungsi untuk memulai perputaran otomatis
+        function startSlideShow() {
+            // Hapus interval yang mungkin sudah ada untuk mencegah duplikasi
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => plusSlides(1), 5000); // Panggil plusSlides(1) untuk maju
+        }
+
+        // Mulai carousel saat halaman dimuat
+        startSlideShow();
+
+    </script>
+</body>
+</html>
